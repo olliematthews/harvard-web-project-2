@@ -11,7 +11,8 @@ socketio = SocketIO(app)
 
 logged_users = ['will', 'celia']
 channels = []
-
+temp_channel = {'name' : None,
+                'users' : []}
 
 @app.route("/", methods = ['GET', 'POST'])
 def index():
@@ -63,3 +64,9 @@ def create_channel():
         return redirect(url_for('index'))
     else:
         return render_template("create_channel.html", dname = dname, channels = channels)
+
+@app.route("/get_users", methods = ['POST'])
+def get_users():
+    user = request.form.get('user')
+    temp_channel['users'].append(user)
+    return jsonify(temp_channel['users'])

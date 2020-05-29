@@ -49,9 +49,11 @@
                   Who do you want to add?
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                  {% for user in users %}
+                    {% if not user==dname %}
+                      <button class="dropdown-item add_user" data-user="{{ user }}" type="button">{{ user }}</a>
+                    {% endif %}
+                  {% endfor %}
                 </div>
               </div>
               <div>
