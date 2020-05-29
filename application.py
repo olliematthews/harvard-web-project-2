@@ -9,7 +9,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 socketio = SocketIO(app)
 
-logged_users = []
+logged_users = ['will', 'celia']
 channels = []
 
 
@@ -54,7 +54,7 @@ def channel_list():
     if dname is None:
         return redirect(url_for('index'))
     else:
-        return render_template("channel_list.html", dname = dname, channels = channels)
+        return render_template("channel_list.html", dname = dname, channels = channels, users = logged_users)
 
 @app.route("/create_channel")
 def create_channel():

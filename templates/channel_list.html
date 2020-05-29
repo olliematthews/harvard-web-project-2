@@ -1,16 +1,30 @@
 {% extends "chat_layout.html" %}
 
 {% block title %}
-      CHannel list
+      Channel list
 {% endblock %}
+
+{% block other_head %}
+  <script id="post" type="text/x-handlebars-template">
+      <div class="post">
+          {% raw -%}
+              {{ contents }}
+          {%- endraw %}
+          <button class="remove btn-link">Remove</button>
+      </div>
+  </script>
+  <script src="channel_list.js"></script>
+{% endblock %}
+
 
 {% block body %}
     <h1>Channel list</h1>
     <div>
+      <h3>Your Channels</h3>
       {% if channels %}
         {% for channel in channels %}
           <div>
-            <form action="{{ url_for('channel', name=channel['name']) }}">
+            <form action="{{ url_for('channel', name=channel['name']) }}" method="post">
               <button type="button" class="btn btn-secondary btn-block">{{ channel['name'] }}</button>
             </form>
           </div>
@@ -20,6 +34,31 @@
       {% endif %}
     </div>
     <div>
-      <a href="{{ url_for('create_channel') }}">Create a new channel</a>
+      <h3>Create a New Channel</h3>
+        <form action="{{ url_for('channel_list') }}" method="post">
+          <div class="form-group">
+            <div>
+              <label for="search">Channel name:</label>
+              <input type="text" class="form-control" name = "search" id="search" placeholder="Put the name of your channel here">
+            </div>
+            <div class="participants">
+            </div>
+            <div class="btn-group">
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Who do you want to add?
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-success">Create Channel</button>
+              </div>
+            </div>
+          </div>
+        </form>
     </div>
 {% endblock %}
