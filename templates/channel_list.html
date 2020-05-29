@@ -1,0 +1,25 @@
+{% extends "chat_layout.html" %}
+
+{% block title %}
+      CHannel list
+{% endblock %}
+
+{% block body %}
+    <h1>Channel list</h1>
+    <div>
+      {% if channels %}
+        {% for channel in channels %}
+          <div>
+            <form action="{{ url_for('channel', name=channel['name']) }}">
+              <button type="button" class="btn btn-secondary btn-block">{{ channel['name'] }}</button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-danger">You do not belong to any channels. </p>
+      {% endif %}
+    </div>
+    <div>
+      <a href="{{ url_for('create_channel') }}">Create a new channel</a>
+    </div>
+{% endblock %}
