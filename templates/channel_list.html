@@ -6,14 +6,15 @@
 
 {% block other_head %}
   <script id="post" type="text/x-handlebars-template">
-      <div class="post">
+      <div class="post", data-user="{% raw -%}{{ contents }}{%- endraw %}">
           {% raw -%}
               {{ contents }}
           {%- endraw %}
           <button class="remove btn-link">Remove</button>
       </div>
   </script>
-  <script src="channel_list.js"></script>
+
+  <script src="{{ url_for('static', filename='js/channel_list.js') }}"></script>
 {% endblock %}
 
 
@@ -24,7 +25,7 @@
       {% if channels %}
         {% for channel in channels %}
           <div>
-            <form action="{{ url_for('channel', name=channel['name']) }}" method="post">
+            <form action="{{ url_for('get_users', name=channel['name']) }}" method="post">
               <button type="button" class="btn btn-secondary btn-block">{{ channel['name'] }}</button>
             </form>
           </div>
@@ -41,7 +42,7 @@
               <label for="search">Channel name:</label>
               <input type="text" class="form-control" name = "search" id="search" placeholder="Put the name of your channel here">
             </div>
-            <div class="participants">
+            <div id="participants">
             </div>
             <div class="btn-group">
               <div class="dropdown">
@@ -50,7 +51,7 @@
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   {% for user in users %}
-                    {% if not user==dname %}
+                    {% if not user in channel_users %}
                       <button class="dropdown-item add_user" data-user="{{ user }}" type="button">{{ user }}</a>
                     {% endif %}
                   {% endfor %}

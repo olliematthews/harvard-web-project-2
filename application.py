@@ -5,14 +5,14 @@ from flask_session import Session
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+# app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SECRET_KEY"] = 'myverysecretkey'
 
 socketio = SocketIO(app)
 
-logged_users = ['will', 'celia']
+logged_users = ['will', 'celia', 'hugo', 'colin', 'flo']
 channels = []
-temp_channel = {'name' : None,
-                'users' : []}
+temp_channels = {}
 
 @app.route("/", methods = ['GET', 'POST'])
 def index():
@@ -55,7 +55,17 @@ def channel_list():
     if dname is None:
         return redirect(url_for('index'))
     else:
-        return render_template("channel_list.html", dname = dname, channels = channels, users = logged_users)
+        # Make sure the user is in the logged users
+        if not dname in logged_users:
+            logged_users.append(dname)
+
+        # Create a temporary channel for the user to make if it is not already there
+        if not dname in temp_channels:
+            temp_channels.update({dname : {'name' : None,
+                                            'users' : [dname]}})
+
+        channel_users = temp_channels[dname]['users']
+        return render_template("channel_list.html", dname = dname, channels = channels, channel_users = channel_users, users = logged_users)
 
 @app.route("/create_channel")
 def create_channel():
@@ -63,10 +73,21 @@ def create_channel():
     if dname is None:
         return redirect(url_for('index'))
     else:
-        return render_template("create_channel.html", dname = dname, channels = channels)
+        return render_template("create_channel.html", dname = dname, channel_users = temp_channels[dname]['users'], channels = channels)
 
 @app.route("/get_users", methods = ['POST'])
 def get_users():
     user = request.form.get('user')
-    temp_channel['users'].append(user)
-    return jsonify(temp_channel['users'])
+    dname = session['dname']
+    # If a user is sent, update the channel users.
+    print(user)
+    if not user == 'No User':
+        # Create a temporary channel for the user to make if it is not already there
+        if not dname in temp_channels:
+            temp_channels.update({dname : {'name' : None,
+                                            'users' : [dname]}})
+        if user in temp_channels[dname]['users']:
+            temp_channels[dname]['users'].pop(temp_channels[dname]['users'].index(user))
+        else:
+            temp_channels[dname]['users'].append(user)
+    return jsonify({'dname' : dname, 'users' : temp_channels[dname]['users']})
